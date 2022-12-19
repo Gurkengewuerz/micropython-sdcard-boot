@@ -1,5 +1,6 @@
 import machine
 import os
+import sys
 
 FAT_FILE = ".mc8051"
 success = False
@@ -27,8 +28,15 @@ try:
 except OSError as e:
     pass
 
+interrupt_pin = machine.Pin(18, machine.Pin.IN, machine.Pin.PULL_UP)
+
 if success:
+    if interrupt_pin.value() == 0:
+        print("Interrupted mounting - SDCard is now mounted in /sd")
+        os.mount(vfs, "/sd")
+        sys.exit()
     os.umount("/")
     os.mount(vfs, "/")
 else:
     print("Failed to mount SDCard")
+    sys.exit()
