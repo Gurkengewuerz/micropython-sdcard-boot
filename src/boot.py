@@ -1,6 +1,7 @@
 import machine
 import os
 import sys
+import gc
 
 FAT_FILE = ".mc8051"
 success = False
@@ -40,3 +41,5 @@ if success:
 else:
     print("Failed to mount SDCard")
     sys.exit()
+
+gc.collect()
