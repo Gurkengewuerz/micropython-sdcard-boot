@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
+    - name: Add SHORT_SHA env property with commit short sha
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
     - name: install mpy-cross
       run: pip install mpy-cross
     - name: create build directory
@@ -16,7 +18,7 @@ jobs:
     - name: cross compile python files
       run: for file in $(find src/ -name '*.py'); do OUTPUT="build/$(echo $file | cut -d'/' -f2- | cut -d. -f1).mpy" && mkdir -p $(dirname "$OUTPUT") && mpy-cross $file -o "$OUTPUT"; done
     - name: create archive
-      run: tar -cvf output/${github.head_ref}-${GITHUB_SHA::6}.tar build/*
+      run: tar -cvf output/${GITHUB_REF_NAME}-${SHORT_SHA}.tar build/*
     - name: generate sha1 of opt package
       run: sha1sum *.tar | cut -d ' ' -f 1 > output/hash
     - name: generate versions file
