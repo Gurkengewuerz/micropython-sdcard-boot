@@ -18,7 +18,7 @@ jobs:
     - name: cross compile python files
       run: for file in $(find src/ -name '*.py'); do OUTPUT="build/$(echo $file | cut -d'/' -f2- | cut -d. -f1).mpy" && mkdir -p $(dirname "$OUTPUT") && mpy-cross $file -o "$OUTPUT"; done
     - name: create archive
-      run: tar -cvf output/${GITHUB_REF_NAME}-${SHORT_SHA}.tar build/*
+      run: tar -cvf output/${GITHUB_REF_NAME}-${SHORT_SHA}.tar --directory build/ .
     - name: generate sha1 of opt package
       run: sha1sum *.tar | cut -d ' ' -f 1 > output/hash
     - name: generate versions file
