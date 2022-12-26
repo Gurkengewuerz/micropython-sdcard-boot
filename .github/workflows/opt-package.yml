@@ -22,7 +22,7 @@ jobs:
     - name: generate sha1 of opt package
       run: sha1sum *.tar | cut -d ' ' -f 1 > output/hash
     - name: generate versions file
-      run: echo -e "0.0.0;$(ls output/*.tar);$(cat output/hash)\r\n" > output/hash
+      run: echo -e "0.0.0;$(ls output/*.tar);$(cat output/hash)\r\n" > output/versions
     - uses: actions/upload-artifact@v3
       with:
         name: opt-package
