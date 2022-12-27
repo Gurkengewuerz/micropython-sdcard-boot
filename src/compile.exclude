@@ -1,0 +1,4 @@
+# file must contain minimum one file to exclude
+#
+# ignore boot and main
+src/*
