@@ -8,6 +8,7 @@ from .lib import uota
 
 
 wifi_config = {}
+wlan = None
 
 def load_wifi_config():
     try:
@@ -18,14 +19,15 @@ def load_wifi_config():
         return False
 
 def do_connect():
-    sta_if = network.WLAN(network.STA_IF)
-    if not sta_if.isconnected():
+    global wlan
+    wlan = network.WLAN(network.STA_IF)
+    if not wlan.isconnected():
         print("connecting to network...")
-        sta_if.active(True)
-        sta_if.connect(wifi_config["network"], wifi_config["password"])
-        while not sta_if.isconnected():
+        wlan.active(True)
+        wlan.connect(wifi_config["network"], wifi_config["password"])
+        while not wlan.isconnected():
             pass
-    print("network config", sta_if.ifconfig())
+    print("network config", wlan.ifconfig())
 
 if load_wifi_config():
     do_connect()
@@ -41,6 +43,11 @@ if not ota.install_update_if_available():
     print("No Update needed")
 else:
     print("Update successful")
+    # disconnect from wifi to prevent "pll_cap_ext 10" errors
+    if wlan is not None:
+        if wlan.isconnected():
+            wlan.disconnect()
+        wlan.active(False)
     machine.reset()
 
 while True:
