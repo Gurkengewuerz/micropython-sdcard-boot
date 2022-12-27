@@ -47,7 +47,7 @@ echo "generating opt package hash"
 sha1sum output/*.tar | cut -d ' ' -f 1 > output/hash
 
 echo "generating version line"
-echo "0.0.0;$(ls output/*.tar);$(cat output/hash)" > output/versions
+echo "0.0.0;$(cd output/ && ls *.tar);$(cat output/hash)" > output/versions
 
 cat output/versions
 
