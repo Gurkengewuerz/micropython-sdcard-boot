@@ -18,7 +18,7 @@ jobs:
     - name: cross compile python files
       run: for file in $(find src/ -name '*.py' $(printf "! -wholename %s " $(grep -v '^#' src/compile.exclude))); do OUTPUT="build/$(echo $file | cut -d'/' -f2- | cut -d. -f1).mpy" && mkdir -p $(dirname "$OUTPUT") && mpy-cross $file -o "$OUTPUT"; done
     - name: copy excluded python file
-      run: for file in $(printf "%s\r\n" $(grep -v '^#' src/compile.exclude) | grep -P .*.py); do OUTPUT="build/$(echo $file | cut -d'/' -f2-)" && mkdir -p $(dirname "$OUTPUT") && cp -f "$file" "$OUTPUT"; done
+      run: for file in $(printf "%s\n" $(grep -v '^#' src/compile.exclude) | grep -P .*.py); do OUTPUT="build/$(echo $file | cut -d'/' -f2-)" && mkdir -p $(dirname "$OUTPUT") && cp -f "$file" "$OUTPUT"; done
     - name: create archive
       run: tar -cvf output/${GITHUB_REF_NAME}-${SHORT_SHA}.tar --directory build/ .
     - name: generate sha1 of opt package
