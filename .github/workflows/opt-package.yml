@@ -7,24 +7,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
-    - name: Add SHORT_SHA env property with commit short sha
-      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
     - name: install mpy-cross
       run: pip install mpy-cross
-    - name: create build directory
-      run: mkdir -p build/ && mkdir -p output/
-    - name: copy non python files
-      run: find src/ -type f ! -name '*.py' ! -name 'compile.exclude' -exec sh -c 'NEWFILE="build/$(echo "$1" | cut -d'/' -f2-)" && mkdir -p $(dirname "$NEWFILE") && cp -f "$1" "$NEWFILE"' sh {}  \;
-    - name: cross compile python files
-      run: for file in $(find src/ -name '*.py' $(printf "! -wholename %s " $(grep -v '^#' src/compile.exclude))); do OUTPUT="build/$(echo $file | cut -d'/' -f2- | cut -d. -f1).mpy" && mkdir -p $(dirname "$OUTPUT") && mpy-cross $file -o "$OUTPUT"; done
-    - name: copy excluded python file
-      run: for file in $(printf "%s\n" $(grep -v '^#' src/compile.exclude) | grep -P .*.py); do OUTPUT="build/$(echo $file | cut -d'/' -f2-)" && mkdir -p $(dirname "$OUTPUT") && cp -f "$file" "$OUTPUT"; done
-    - name: create archive
-      run: tar -cvf output/${GITHUB_REF_NAME}-${SHORT_SHA}.tar --directory build/ .
-    - name: generate sha1 of opt package
-      run: sha1sum output/*.tar | cut -d ' ' -f 1 > output/hash
-    - name: generate versions file
-      run: echo "0.0.0;$(ls output/*.tar);$(cat output/hash)" > output/versions
+    - name: run compilation
+      run: bash ./compile.sh
     - uses: actions/upload-artifact@v3
       with:
         name: opt-package
